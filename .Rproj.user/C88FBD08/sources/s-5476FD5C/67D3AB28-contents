@@ -1,0 +1,35 @@
+# declaration des Library
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(maps)
+#Covid data in USA
+UStable<- read.csv("USvax.csv", header=TRUE, sep=",")
+UStable <- UStable %>% group_by(states) %>%
+summarise(Cases= n()) %>%
+  arrange(desc(Cases))
+View(UStable)
+us_states <- map_data("state")
+View(us_states)
+#merge
+UStable$states <- tolower(UStable$states)
+data <- merge(us_states, UStable,
+              by.x="region",
+              by.y="states")
+ggplot(data, aes(x=long, y=lat,
+                 group=group,
+                 fill= Cases))+
+  geom_polygon()
+
+mapdata <- left_join(mapdata,UStable,by="region")
+View(mapdata)
+mapdata1 <- mapdata %>% filter(!is.na(mapdata$perc_atleastonedose))
+View(mapdata1)
+map1 <- ggplot(mapdata1, aes(x=long, y=lat, group=group))+
+  geom_polygon(aes(fill=perc_atleastonedose), color="black")
+map1
+mapdata2 <- mapdata %>% filter(!is.na(mapdata$perc_covidcases))
+View(mapdata2)
+Us_state_data<- left_join(us_state, data)
+Us_state_data
+

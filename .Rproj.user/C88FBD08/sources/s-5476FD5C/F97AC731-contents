@@ -1,0 +1,19 @@
+#Plotting point
+Us_map <- get_stamenmap( bbox= c(left=2.2, bottom= 39.2,
+                                 right= 3.7, top=40),
+                         map= "terrain",
+                         Zoom=10)
+#Plot the map
+ggmap(Us_map)
+
+ggmap(Us_map)+
+  geom_point(data,
+             aes(x=long, y=lat),
+             size=0.3)+
+  theme_map()
+geom_point(data=data,aes(x=long, y=lat, size=perc_atleastonedose),
+           colour="Deep Pink", 
+           fill="gold",pch=21, alpha=I(0.3))+
+  scale_fill_viridis(option="magma")
+
+

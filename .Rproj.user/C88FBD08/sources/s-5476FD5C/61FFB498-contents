@@ -1,0 +1,29 @@
+# declaration des Library
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(maps)
+library(usmap)
+library(maps)
+library(mapdata)
+
+#Covid data
+UStable<- read.csv("USvax.csv", header=TRUE, sep=",")
+View(UStable)
+us_states <- map_data("state")
+head (us_states)
+View(us_states)
+
+#Merge data
+UStable$states <- tolower(UStable$states)
+data <- merge(us_states, UStable,
+              by.x="region",
+              by.y="states")
+View(data)
+p<- ggplot(data=us_state,
+           mapping = aes(x=long, y = lat, group=group))
+p+geom_polygon(fill="white", color="black")
+p<- ggplot(data=us_state,
+           aes(x=long, y=lat, 
+               group=group, fill=perc_covidcases))
+p+geom_polygon(color="grey90", size=0.1)+ guides(fill=FALSE)

@@ -1,0 +1,16 @@
+library(ggplot2)
+library(dplyr)
+library(usmap)
+
+
+Usvaccd <- read.csv("USvax.csv", header= TRUE, sep=",")
+Usvaccd
+ggplot() + geom_polygon(data=Usvaccd, aes(x=long, y=lat, group = group),color="white", fill="grey10" )
+plot_usmap(region="states") + labs(title= "US_covid19", subtitle="This is a map that presents the ratio of infected people in the US")+ theme(panel.background = element_blank())
+mapdata <- map_data("states")
+View(mapdata)
+mapdata <- left_join(mapdata,USvax,by="States")
+mapdata1 <- mapdata %>% filter (!is.na(mapdata$perc_atleastonedose))
+View(mapdata1)
+map1 <- ggplot(mapdata1,aes(x=long, y=lat, group=group)) + geom_polygon(aes(fill=perc_atleastonedose), color="black")
+map1

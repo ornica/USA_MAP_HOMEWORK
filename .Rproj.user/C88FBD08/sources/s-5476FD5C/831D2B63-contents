@@ -1,0 +1,47 @@
+# declaration des Library
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(maps)
+library(usmap)
+library(maps)
+library(map_data)
+
+us_state<- map_data("state")
+head(us_state)
+
+dim(us_state)
+p<- ggplot(data=us_state,
+           mapping = aes(x=long, y = lat, group=group))
+p+geom_polygon(fill="white", color="black")
+p<- ggplot(data=us_state,
+           aes(x=long, y=lat, 
+               group=group, fill=region))
+p+geom_polygon(color="grey90", size=0.1)+ guides(fill=FALSE)
+
+data<- read.csv("USvax.csv", header= TRUE, sep=",")
+view(data)
+data %>% select(states,Population, Cases,perc_atleastonedose,perc_covidcases) %>% 
+  sample_n(50)
+data$region <- tolower(data$states)
+Us_state_data<- left_join(us_state, data)
+Us_state_data
+p<-ggplot(data=Us_state_data, 
+          aes(x=long, y=lat, 
+              group=group, fill= states))
+p+geom_polygon(color="gray90", size=0.1)+
+  coord_map(projection="albers", lat0=39, lat1=45)
+p0<- ggplot(data= Us_state_data, 
+            mapping = aes(x=long, y=lat, group=group, fill= states))
+p1<-p0+geom_polygon(color="grey90", size=0.1)+ 
+  coord_map(projection = "albers", lat0=39,lat1=45)+ labs(title="Covid Vax")+labs(fill("data=perc_atleastonedose"))
+p1
+geom_point(data=data,aes(x=long, y=lat, size=perc_atleastonedose),
+           colour="Deep Pink", 
+           fill="gold",pch=21, alpha=I(0.3))+
+  scale_fill_viridis(option="magma")+scale_color_brewer(palette = "Dark2")+
+theme_dark() +
+  theme(
+    legend.position = "right",
+    panel.background = element_rect(fill = "#2D2D2D2D"),
+    legend.key = element_rect(fill = "gold")
